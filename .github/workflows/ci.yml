@@ -1,0 +1,38 @@
+name: Go Vault CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go-version: [1.22]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Build
+        run: |
+          mkdir -p bin
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            go build -o bin/go-vault.exe ./cmd/go-vault
+          else
+            go build -o bin/go-vault ./cmd/go-vault
+          fi
