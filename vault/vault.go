@@ -2,6 +2,7 @@ package vault
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
@@ -14,6 +15,7 @@ type Vault struct {
 	KDF      *KDFParams
 	FEK      []byte
 	Locked   bool
+	syncer   Syncer
 	data     plaintextVault
 }
 
@@ -23,6 +25,27 @@ func NewVault(filename string, kdf *KDFParams) *Vault {
 	}
 	return &Vault{Filename: filename, KDF: kdf}
 }
+
+func (v *Vault) SetSyncer(s Syncer) {
+	v.syncer = s
+}
+
+func (v *Vault) SyncPull() error {
+	if v.syncer == nil {
+		return fmt.Errorf("no syncer configured")
+	}
+
+	return v.syncer.Pull(v.Filename)
+}
+
+func (v *Vault) SyncPush() error {
+	if v.syncer == nil {
+		return fmt.Errorf("no syncer configured")
+	}
+
+	return v.syncer.Push(v.Filename)
+}
+
 func (v *Vault) Create(passphrase []byte) error {
 	if len(v.KDF.Salt) == 0 {
 		v.KDF.Salt, _ = randBytes(16)

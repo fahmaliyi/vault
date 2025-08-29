@@ -16,6 +16,9 @@ func main() {
 	}
 	v := vault.NewVault(vaultPath, nil)
 
+	syncer := &vault.GoogleDriveSync{}
+	v.SetSyncer(syncer)
+
 	var master []byte
 	if _, err := os.Stat(vaultPath); os.IsNotExist(err) {
 		fmt.Println("No vault found. Setting up new master password.")

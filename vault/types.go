@@ -30,17 +30,6 @@ type KDFParams struct {
 	Salt         []byte
 }
 
-type vaultFile struct {
-	Magic   string
-	Version byte
-	Salt    []byte
-	Time    uint32
-	Memory  uint32
-	Threads uint8
-	Nonce   []byte
-	Cipher  []byte
-}
-
 type fileHeader struct {
 	Flags        uint16
 	KDFAlgo      uint8

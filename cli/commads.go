@@ -54,6 +54,19 @@ func RunCommands(v *vault.Vault) {
 			case "d":
 				handleDelete(v, id)
 			}
+		case "sync":
+			fmt.Println("Syncing vault with Google Drive...")
+			if err := v.SyncPull(); err != nil {
+				fmt.Println("Error pulling remote vault:", err)
+			} else {
+				fmt.Println("Vault pulled successfully!")
+			}
+
+			if err := v.SyncPush(); err != nil {
+				fmt.Println("Error pushing local vault:", err)
+			} else {
+				fmt.Println("Vault pushed successfully!")
+			}
 		case "q":
 			fmt.Println("Exiting.")
 			return
